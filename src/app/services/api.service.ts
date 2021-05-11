@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@models/ApiResponse';
+import { ApiResponse } from '@models/ApiResponse.model';
 
 @Injectable({
   providedIn: 'root',

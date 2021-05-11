@@ -4,3 +4,4 @@ export const ALL_MAKES = `${API_URL}vehicles/GetMakeForManufacturer/`;
 
 export const VIEW_DETAILS = 'View Details';
 export const COLUMNS = ['ID', 'Common Name', 'Country'];
+export const DETAIL_PATH = '/details';

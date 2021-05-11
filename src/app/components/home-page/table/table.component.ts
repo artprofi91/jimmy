@@ -1,9 +1,21 @@
-import { ApiResponse, TableData, Results } from '@models/ApiResponse';
+import { Router } from '@angular/router';
+import { TableData, Results } from '@models/ApiResponse.model';
 import { Component, OnInit } from '@angular/core';
-import { VIEW_DETAILS, COLUMNS } from '@shared/constants';
-import { ApiService } from '@services/api.service';
+import { VIEW_DETAILS, COLUMNS, DETAIL_PATH } from '@shared/constants';
 import { Subject } from 'rxjs';
-import { takeUntil, take } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import {
+  getTableData,
+  getAllManufacturesLoading,
+  getAllMakesResponse,
+} from '@state/auto.selectors';
+import {
+  GetAllMakes,
+  GetAllManufactures,
+  GetSelectedManufactureData,
+} from '@state/auto.actions';
+import { AppState } from '@state/app.reducer';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-table',
@@ -17,17 +29,14 @@ export class TableComponent implements OnInit {
   start = 0;
   limit = 15;
   end = this.limit + this.start;
-  btnText = VIEW_DETAILS;
-  isLoading = true;
+  btnViewText = VIEW_DETAILS;
+  loading$ = this.store.select(getAllManufacturesLoading);
 
-  constructor(private apiService: ApiService) {}
+  constructor(private store: Store<AppState>, private router: Router) {}
 
   ngOnInit(): void {
+    this.store.dispatch(GetAllManufactures());
     this.getManufactures();
-    if (!this.isLoading) {
-      this.dataSource = this.getTableData(this.start, this.end);
-      this.updateIndex();
-    }
   }
 
   ngOnDestroy(): void {
@@ -36,12 +45,12 @@ export class TableComponent implements OnInit {
   }
 
   private getManufactures(): void {
-    this.apiService
-      .getManufactures()
+    this.store
+      .select(getTableData)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((manufactures: ApiResponse) => {
+      .subscribe((manufactures: Results[] | undefined) => {
         const tableData: TableData[] = [];
-        manufactures.Results.forEach((manufacture: Results) => {
+        manufactures?.forEach((manufacture: Results) => {
           const { Country, Mfr_CommonName, Mfr_ID } = manufacture;
           const formattedManufacture: any = {
             ID: String(Mfr_ID),
@@ -53,7 +62,8 @@ export class TableComponent implements OnInit {
             (manufacture) => manufacture['Common Name']
           );
         });
-        this.isLoading = false;
+        this.dataSource = this.getTableData(this.start, this.end);
+        this.updateIndex();
       });
   }
 
@@ -84,11 +94,11 @@ export class TableComponent implements OnInit {
   }
 
   viewDetails(row: TableData): void {
-    this.apiService
-      .getMakes(String(row.ID))
-      .pipe(take(1))
-      .subscribe((data) => {
-        console.log(data);
-      });
+    // !TODO combine 2 dispatch on the effect side
+    this.store.dispatch(
+      GetSelectedManufactureData({ selectedManufactureData: row })
+    );
+    this.store.dispatch(GetAllMakes({ id: String(row.ID) }));
+    this.router.navigate([DETAIL_PATH]);
   }
 }

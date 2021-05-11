@@ -1,10 +1,10 @@
 <div class="container mat-elevation-z8">
-  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <mat-spinner *ngIf="loading$ | async"></mat-spinner>
   <mat-table
     #table
     [dataSource]="dataSource"
     (scroll)="onTableScroll($event)"
-    *ngIf="!isLoading"
+    *ngIf="!(loading$ | async)"
   >
     <mat-header-row
       *matHeaderRowDef="
@@ -18,11 +18,11 @@
     </ng-container>
     <ng-container matColumnDef="detailsButton">
       <mat-header-cell *matHeaderCellDef class="details-button">
-        {{ btnText }}
+        {{ btnViewText }}
       </mat-header-cell>
       <mat-cell *matCellDef="let row" class="details-button">
         <button mat-raised-button color="accent" (click)="viewDetails(row)">
-          {{ btnText }}
+          {{ btnViewText }}
         </button>
       </mat-cell>
     </ng-container>

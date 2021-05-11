@@ -1,1 +1,6 @@
-<p>details-page works!</p>
+<div class="container" *ngIf="getAllMakesResponse$ | async">
+  <mat-card>{{ selectedManufacture$ | async | json }}</mat-card>
+  <mat-list role="list" *ngFor="let name of modelNames">
+    <mat-list-item role="listitem">{{ name }}</mat-list-item>
+  </mat-list>
+</div>

@@ -21,7 +21,8 @@
       "@components/*": ["src/app/components/*"],
       "@models/*": ["src/app/models/*"],
       "@shared/*": ["src/app/shared/*"],
-      "@services/*": ["src/app/services/*"]
+      "@services/*": ["src/app/services/*"],
+      "@state/*": ["src/app/state/*"]
     }
   },
   "angularCompilerOptions": {

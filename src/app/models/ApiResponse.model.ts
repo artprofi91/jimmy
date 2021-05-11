@@ -24,4 +24,4 @@ export interface TableData {
   ID: number;
   'Common Name': string;
   Country: string;
-};
+}
